@@ -59,6 +59,12 @@ class ClientThread(Thread):
         for movie in movies:
             self.client_socket.sendall(movie.get_message(msg_id))
 
+        end_msg = (msg_id + 1).to_bytes(4, 'big')
+        end_msg = len(end_msg).to_bytes(4, 'big') + end_msg
+        self.client_socket.sendall(end_msg)
+
+        print("Successfully sent movie list")
+
         db_cursor.close()
         db.close()
 
