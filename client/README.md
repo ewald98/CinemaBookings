@@ -1,0 +1,1 @@
+Client mobile app code should be in this folder
