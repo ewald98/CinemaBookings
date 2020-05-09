@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -71,6 +73,17 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(ArrayList<Movie> movies) {
+            TextView x = findViewById(R.id.film1title);
+            x.setText("Server data received");
+            /*
+             TODO: @Adi, trebuie sa legi informatiile de la movie-uri la frontend
+
+            for (i, i < movies.len, i++) {
+
+                title1 = findViewById(R.id.film1title)
+                title1.text = movie.title
+            }
+             */
         }
 
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
