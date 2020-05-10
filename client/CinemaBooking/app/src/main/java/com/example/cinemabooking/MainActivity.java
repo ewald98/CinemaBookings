@@ -7,7 +7,10 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -20,12 +23,82 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+    private String[] filmnames = {
+            "Film titlu 1",
+            "Film titlu 2",
+            "Film titlu 3",
+            "Film titlu 4",
+            "Film titlu 5",
+            "Film titlu 6",
+            "Film titlu 7",
+            "Film titlu 8",
+            "Film titlu 9",
+            "Film titlu 10",
+            "Film titlu 11",
+            "Film titlu 12",
+            "Film titlu 13",
+            "Film titlu 14",
+            "Film titlu 15",
+            "Film titlu 16"
+    };
+    private String[] filmdescriptions = {
+            "Film descriere 1",
+            "Film descrieregfdhgerictgoirey descrieregfdhgerictgoirey descrieregfdhgerictgoirey descrieregfdhgerictgoirey descrieregfdhgerictgoirey descrieregfdhgerictgoirey descrieregfdhgerictgoirey descrieregfdhgerictgoirey descrieregfdhgerictgoirey descrieregfdhgerictgoirey descrieregfdhgerictgoirey descrieregfdhgerictgoirey 2",
+            "Film descriere 3",
+            "Film descriere 4",
+            "Film descriere 5",
+            "Film descriere 6",
+            "Film descriere 7",
+            "Film descriere 8",
+            "Film descriere 9",
+            "Film descriere 10",
+            "Film descriere 11",
+            "Film descriere 12",
+            "Film descriere 13",
+            "Film descriere 14",
+            "Film descriere 15",
+            "Film descriere 16"
+    };
+    private Integer[] filmpictureid = {
+            R.drawable.blank,
+            R.drawable.blank,
+            R.drawable.blank,
+            R.drawable.blank,
+            R.drawable.blank,
+            R.drawable.blank,
+            R.drawable.blank,
+            R.drawable.blank,
+            R.drawable.blank,
+            R.drawable.blank,
+            R.drawable.blank,
+            R.drawable.blank,
+            R.drawable.blank,
+            R.drawable.blank,
+            R.drawable.blank,
+            R.drawable.blank
+    };
+
+    private ListView list;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         new NetworkOperator().execute();
+
+        /* list view for main activity */
+        CustomListAdapter adapter = new CustomListAdapter(this, filmnames, filmdescriptions, filmpictureid);
+        list = (ListView)findViewById(R.id.list);
+        list.setAdapter(adapter);
+
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String SelectedItem = filmnames[+position];
+                Toast.makeText(getApplicationContext(), SelectedItem, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public static byte[] concatenateByteArrays(byte[] a, byte[] b) {
@@ -73,8 +146,8 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(ArrayList<Movie> movies) {
-            TextView x = findViewById(R.id.film1title);
-            x.setText("Server data received");
+            //TextView x = findViewById(R.id.film1title);
+            //x.setText("Server data received");
             /*
              TODO: @Adi, trebuie sa legi informatiile de la movie-uri la frontend
 

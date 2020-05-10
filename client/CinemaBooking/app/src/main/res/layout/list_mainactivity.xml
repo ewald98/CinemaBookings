@@ -1,0 +1,40 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@color/bg">
+
+    <ImageView
+        android:id="@+id/filmpictures"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="25dp" />
+
+    <LinearLayout android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/filmtitles"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Film title"
+            android:textSize="22dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="15dp"
+            android:textColor="@color/white" />
+        <TextView
+            android:id="@+id/filmdescriptions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Film description"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:textColor="@color/white2"
+            android:textSize="17dp" />
+    </LinearLayout>
+</LinearLayout>
+
