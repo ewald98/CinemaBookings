@@ -3,14 +3,13 @@ package com.example.cinemabooking;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -20,65 +19,10 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class MainActivity extends AppCompatActivity {
 
-    private String[] filmnames = {
-            "Film titlu 1",
-            "Film titlu 2",
-            "Film titlu 3",
-            "Film titlu 4",
-            "Film titlu 5",
-            "Film titlu 6",
-            "Film titlu 7",
-            "Film titlu 8",
-            "Film titlu 9",
-            "Film titlu 10",
-            "Film titlu 11",
-            "Film titlu 12",
-            "Film titlu 13",
-            "Film titlu 14",
-            "Film titlu 15",
-            "Film titlu 16"
-    };
-    private String[] filmdescriptions = {
-            "Film descriere 1",
-            "Film descrieregfdhgerictgoirey descrieregfdhgerictgoirey descrieregfdhgerictgoirey descrieregfdhgerictgoirey descrieregfdhgerictgoirey descrieregfdhgerictgoirey descrieregfdhgerictgoirey descrieregfdhgerictgoirey descrieregfdhgerictgoirey descrieregfdhgerictgoirey descrieregfdhgerictgoirey descrieregfdhgerictgoirey 2",
-            "Film descriere 3",
-            "Film descriere 4",
-            "Film descriere 5",
-            "Film descriere 6",
-            "Film descriere 7",
-            "Film descriere 8",
-            "Film descriere 9",
-            "Film descriere 10",
-            "Film descriere 11",
-            "Film descriere 12",
-            "Film descriere 13",
-            "Film descriere 14",
-            "Film descriere 15",
-            "Film descriere 16"
-    };
-    private Integer[] filmpictureid = {
-            R.drawable.blank,
-            R.drawable.blank,
-            R.drawable.blank,
-            R.drawable.blank,
-            R.drawable.blank,
-            R.drawable.blank,
-            R.drawable.blank,
-            R.drawable.blank,
-            R.drawable.blank,
-            R.drawable.blank,
-            R.drawable.blank,
-            R.drawable.blank,
-            R.drawable.blank,
-            R.drawable.blank,
-            R.drawable.blank,
-            R.drawable.blank
-    };
-
-    private ListView list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,18 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
         new NetworkOperator().execute();
 
-        /* list view for main activity */
-        CustomListAdapter adapter = new CustomListAdapter(this, filmnames, filmdescriptions, filmpictureid);
-        list = (ListView)findViewById(R.id.list);
-        list.setAdapter(adapter);
 
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String SelectedItem = filmnames[+position];
-                Toast.makeText(getApplicationContext(), SelectedItem, Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     public static byte[] concatenateByteArrays(byte[] a, byte[] b) {
@@ -115,6 +48,14 @@ public class MainActivity extends AppCompatActivity {
 
         public static final String IP_ADDRESS = "10.0.2.2";
         public static final int PORT = 2004;
+
+        private String[] filmNames;
+        private String[] filmDescriptions;
+        private String[] filmImageUrl;
+
+
+        private final static int REQUEST_CODE_1 = 1;
+        private ListView list;
 
         Socket socket;
         OutputStream os;
@@ -142,21 +83,41 @@ public class MainActivity extends AppCompatActivity {
             }
 
             return movieList;
+
         }
 
         @Override
         protected void onPostExecute(ArrayList<Movie> movies) {
-            //TextView x = findViewById(R.id.film1title);
-            //x.setText("Server data received");
-            /*
-             TODO: @Adi, trebuie sa legi informatiile de la movie-uri la frontend
 
-            for (i, i < movies.len, i++) {
+            filmNames = new String[movies.size()];
+            filmDescriptions = new String[movies.size()];
+            filmImageUrl = new String[movies.size()];
 
-                title1 = findViewById(R.id.film1title)
-                title1.text = movie.title
+            Iterator itr=movies.iterator();
+            int i = 0;
+
+            while(itr.hasNext()){
+                Movie mv=(Movie)itr.next();
+                filmNames[i] = mv.getName();
+                filmDescriptions[i] = mv.getDescription();
+                filmImageUrl[i] = mv.getImageUrl();
+                i++;
             }
-             */
+
+            CustomListAdapter adapter = new CustomListAdapter(MainActivity.this, filmNames, filmDescriptions, filmImageUrl);
+            list = (ListView)findViewById(R.id.list);
+            list.setAdapter(adapter);
+
+            list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String SelectedItem = filmNames[+position];
+                    Intent intent = new Intent(MainActivity.this, MovieDates.class);
+                    intent.putExtra("message", SelectedItem);
+                    startActivityForResult(intent, REQUEST_CODE_1);
+                }
+            });
+
         }
 
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
