@@ -34,8 +34,8 @@ public class MovieDates extends AppCompatActivity {
 
         // Get the transferred data from source activity.
         Intent intent = getIntent();
-        movieID = intent.getStringExtra("message2");
-        String message = intent.getStringExtra("message1");
+        movieID = intent.getStringExtra("message1");
+        String message = intent.getStringExtra("message2");
         message += " " + movieID;
 
         TextView textView = (TextView)findViewById(R.id.requestDataTextView);
@@ -58,8 +58,8 @@ public class MovieDates extends AppCompatActivity {
         public static final String IP_ADDRESS = "10.0.2.2";
         public static final int PORT = 2005;
 
-        private List<String> movieDate;
-        private List<String> movieSeatsAvailable;
+        private List<String> movieDate = new ArrayList<String>();
+        private List<Integer> movieSeatsAvailable = new ArrayList<Integer>();
 
         private final static int REQUEST_CODE_1 = 1;
         private ListView list;
@@ -134,23 +134,17 @@ public class MovieDates extends AppCompatActivity {
             int msgLen = readIntLittleEndian(dis);
             int msgId = readIntLittleEndian(dis);
             int msgTimeLen = 13;
-            int msgSeatsAvailableLen;
 
-            msgSeatsAvailableLen = msgLen - 17;
             byte[] timeByte;
-            byte[] seatsAvailableByte;
+            int seatsAvailable;
 
             while(msgId == 5)
             {
-                msgTimeLen = readIntLittleEndian(dis);
-                msgSeatsAvailableLen = readIntLittleEndian(dis);
                 timeByte = new byte[msgTimeLen];
-                seatsAvailableByte = new byte[msgSeatsAvailableLen];
                 dis.readFully(timeByte);
-                dis.readFully(seatsAvailableByte);
+                seatsAvailable = readIntLittleEndian(dis);
 
                 String time = new String(timeByte, StandardCharsets.UTF_8);
-                String seatsAvailable = new String(seatsAvailableByte, StandardCharsets.UTF_8);
                 movieDate.add(time);
                 movieSeatsAvailable.add(seatsAvailable);
                 System.out.println(time + " " + seatsAvailable  + "\n");

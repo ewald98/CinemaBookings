@@ -43,6 +43,10 @@ class ClientThread(Thread):
     def acknowledge_movie_list(self):
         data = self.client_socket.recv(8, socket.MSG_WAITALL)
         print("Server received data:", data)
+        msg_id = int.from_bytes(data[4:8], byteorder='big')
+        if msg_id != 1:
+            print("Error: invalid msg_id(" + str(msg_id) + ")")
+            exit(1)
 
     def send_movie_list(self):
         msg_id = 2
@@ -59,7 +63,9 @@ class ClientThread(Thread):
         for movie in movies:
             self.client_socket.sendall(movie.get_message(msg_id))
 
-        end_msg = (msg_id + 1).to_bytes(4, 'big')
+        msg_id = 3
+
+        end_msg = msg_id.to_bytes(4, 'big')
         end_msg = len(end_msg).to_bytes(4, 'big') + end_msg
         self.client_socket.sendall(end_msg)
 
