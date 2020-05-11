@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
             list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Integer SelectedItem1 = filmID[+position];
+                    String SelectedItem1 = Integer.toString(filmID[+position]);
                     String SelectedItem2 = filmNames[+position];
                     Intent intent = new Intent(MainActivity.this, MovieDates.class);
                     intent.putExtra("message1", SelectedItem1);
@@ -122,7 +122,11 @@ public class MainActivity extends AppCompatActivity {
                     startActivityForResult(intent, REQUEST_CODE_1);
                 }
             });
-
+            try {
+                is = socket.getInputStream();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -168,7 +172,8 @@ public class MainActivity extends AppCompatActivity {
                 msgId = readIntLittleEndian(dis);
 
             }
-
+            if(msgId != 3)
+                throw new IOException("Invalid message id");
             return movieList;
         }
 

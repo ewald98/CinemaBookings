@@ -18,7 +18,7 @@ public class MovieDates extends AppCompatActivity {
         // Get the transferred data from source activity.
         Intent intent = getIntent();
         String message = intent.getStringExtra("message1");
-        message += " " + intent.getStringExtra("message2");;
+        message += " " + intent.getStringExtra("message2");
 
         TextView textView = (TextView)findViewById(R.id.requestDataTextView);
         textView.setText(message);
