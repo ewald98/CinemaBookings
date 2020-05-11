@@ -23,14 +23,16 @@ public class CustomListAdapter extends ArrayAdapter<String> {
     private final String[] filmtitles;
     private final String[] filmdescriptions;
     private final String[] filmpictures;
+    private final Integer[] filmID;
 
-    public CustomListAdapter(Activity context, String[] filmtitles, String[] filmdescriptions, String[] filmpictures) {
+    public CustomListAdapter(Activity context, String[] filmtitles, String[] filmdescriptions, String[] filmpictures, Integer[] filmID) {
         super(context, R.layout.list_mainactivity, filmtitles);
 
         this.context = context;
         this.filmtitles = filmtitles;
         this.filmdescriptions = filmdescriptions;
         this.filmpictures = filmpictures;
+        this.filmID = filmID;
     }
 
     public View getView(int position, View view, ViewGroup parent) {

@@ -2,7 +2,7 @@ package com.example.cinemabooking;
 
 import java.util.HashMap;
 
-public class    Movie {
+public class Movie {
     private String name;
     private int  movieId;
     private String imageUrl;

@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         private String[] filmNames;
         private String[] filmDescriptions;
         private String[] filmImageUrl;
+        private Integer[] filmID;
 
 
         private final static int REQUEST_CODE_1 = 1;
@@ -92,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
             filmNames = new String[movies.size()];
             filmDescriptions = new String[movies.size()];
             filmImageUrl = new String[movies.size()];
+            filmID = new Integer[movies.size()];
 
             Iterator itr=movies.iterator();
             int i = 0;
@@ -101,19 +103,22 @@ public class MainActivity extends AppCompatActivity {
                 filmNames[i] = mv.getName();
                 filmDescriptions[i] = mv.getDescription();
                 filmImageUrl[i] = mv.getImageUrl();
+                filmID[i] = mv.getMovieId();
                 i++;
             }
 
-            CustomListAdapter adapter = new CustomListAdapter(MainActivity.this, filmNames, filmDescriptions, filmImageUrl);
+            CustomListAdapter adapter = new CustomListAdapter(MainActivity.this, filmNames, filmDescriptions, filmImageUrl, filmID);
             list = (ListView)findViewById(R.id.list);
             list.setAdapter(adapter);
 
             list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    String SelectedItem = filmNames[+position];
+                    Integer SelectedItem1 = filmID[+position];
+                    String SelectedItem2 = filmNames[+position];
                     Intent intent = new Intent(MainActivity.this, MovieDates.class);
-                    intent.putExtra("message", SelectedItem);
+                    intent.putExtra("message1", SelectedItem1);
+                    intent.putExtra("message2", SelectedItem2);
                     startActivityForResult(intent, REQUEST_CODE_1);
                 }
             });
