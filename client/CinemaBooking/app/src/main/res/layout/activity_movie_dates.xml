@@ -8,15 +8,6 @@
     tools:context=".MovieDates" >
 
     <TextView
-        android:id="@+id/asdsaf"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/white"
-        android:text=" dgfdgdf"
-        android:layout_below="@+id/requestDataTextView"
-        android:textSize="20dp" />
-
-    <TextView
         android:id="@+id/requestDataTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
