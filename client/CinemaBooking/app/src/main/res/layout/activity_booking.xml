@@ -9,8 +9,9 @@
         android:id="@+id/bookingDataTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/white"
+        android:textColor="@color/bg"
         android:textSize="20dp"
+        android:text="*stub*"
         tools:ignore="MissingConstraints" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

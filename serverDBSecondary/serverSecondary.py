@@ -29,7 +29,7 @@ class Showtime:
     @staticmethod
     def decode_datetime(encoded_datetime):
         x = datetime.strptime(encoded_datetime, "%d.%m - %H:%M")
-        return x
+        return x.strftime("%Y-%m-%d %H:%M:%S")
 
 
 # Multi-threaded Python server : TCP Server Socket Thread Pool
@@ -89,25 +89,42 @@ class ClientThread(Thread):
         db_cursor.close()
         db.close()
 
-    def handle_booking_request(self):
+    def handle_booking_request(self, msg_len):
         # TODO: finish this
-        data = self.client_socket.recv(4, socket.MSG_WAITALL)
-        seats = int.from_bytes(data[0:4], byteorder='big')
+        data = self.client_socket.recv(12, socket.MSG_WAITALL)
+        phone_no_len = int.from_bytes(data[0:4], byteorder='big')
+        movie_id = int.from_bytes(data[4:8], byteorder='big')
+        seats = int.from_bytes(data[8:12], byteorder='big')
 
         data = self.client_socket.recv(13, socket.MSG_WAITALL)
-        # showtime =
+        encoded_showtime = str(data)
+        decoded_showtime = Showtime.decode_datetime(encoded_showtime)
 
-        def decode_datetime(encoded_datetime):
-            x = datetime.strptime(encoded_datetime, "%d.%m - %H:%M")
-            return x
+        data = self.client_socket.recv(phone_no_len, socket.MSG_WAITALL)
+        phone_no = str(data)
 
-        msg_id = 8
+        name_len = msg_len - 25 - phone_no_len
+        data = self.client_socket.recv(name_len, socket.MSG_WAITALL)
+        name = str(data)
 
+        # TODO: use thread-locking mechanism
         db = sqlite3.connect('cinema.db')
         db_cursor = db.cursor()
-        db_cursor.execute("SELECT * FROM showtimes WHERE  = " + str())
+        # get id_s using movie_id & showtime
+        db_cursor.execute("SELECT id_s FROM showtimes WHERE seats_available = " + str(seats))
+        db_cursor.execute("SELECT * FROM showtimes WHERE seats_available = " + str(seats))
         rows = db_cursor.fetchall()
 
+        confirmation_code = 0
+        if len(rows) == 0:
+            confirmation_code = 0
+        else:
+            confirmation_code = 1
+
+        db_cursor.execute("UPDATE showtimes SET seats_available = (?) WHERE ", (seats_available - seats,))
+
+        # send confirmation/error
+        msg_id = 8
 
 
 # Multi-threaded Python server : TCP Server Socket Program Stub

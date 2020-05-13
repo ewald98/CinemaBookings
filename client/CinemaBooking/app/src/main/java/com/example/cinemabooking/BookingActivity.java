@@ -16,7 +16,7 @@ public class BookingActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String movieID = intent.getStringExtra("message1");
         String movieName = intent.getStringExtra("message2");
-        String movieDates = intent.getStringExtra("message2");
+        String movieDates = intent.getStringExtra("message3");
         String message = movieName + " " + movieID + " " + movieDates;
 
         TextView textView = (TextView)findViewById(R.id.bookingDataTextView);
