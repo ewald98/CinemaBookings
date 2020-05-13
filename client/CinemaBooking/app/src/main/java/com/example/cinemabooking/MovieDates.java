@@ -25,7 +25,10 @@ import java.util.List;
 
 public class MovieDates extends AppCompatActivity {
     private ListView list2;
-    String movieID;
+    private String movieID;
+    private String movieName;
+    private String[] movieDate;
+    private Integer[] movieSeatsAvailable;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,29 +37,11 @@ public class MovieDates extends AppCompatActivity {
         // Get the transferred data from source activity.
         Intent intent = getIntent();
         movieID = intent.getStringExtra("message1");
-        String message = intent.getStringExtra("message2");
-        message += " " + movieID;
-
-        TextView textView = (TextView)findViewById(R.id.requestDataTextView);
-        textView.setText(message);
-
-        String[] movieDate = {
-                "14.05.2020 - 15:00",
-                "14.05.2020 - 17:00",
-                "14.05.2020 - 19:00",
-                "14.05.2020 - 21:00"
-        };
-
-        Integer[] movieSeatsAvailable = {
-                30,
-                45,
-                21,
-                0
-        };
-
-        CustomListAdapterReservation adapter = new CustomListAdapterReservation(MovieDates.this, movieDate, movieSeatsAvailable);
-        list2 = (ListView)findViewById(R.id.list2);
-        list2.setAdapter(adapter);
+        movieName = intent.getStringExtra("message2");
+//        String message = movieName + " " + movieID;
+//
+//        TextView textView = (TextView)findViewById(R.id.requestDataTextView);
+//        textView.setText(message);
 
         new NetworkOperator().execute();
     }
@@ -75,8 +60,8 @@ public class MovieDates extends AppCompatActivity {
         public static final String IP_ADDRESS = "10.0.2.2";
         public static final int PORT = 2005;
 
-        private List<String> movieDate = new ArrayList<String>();
-        private List<Integer> movieSeatsAvailable = new ArrayList<Integer>();
+        private List<String> movieDateList = new ArrayList<String>();
+        private List<Integer> movieSeatsAvailableList = new ArrayList<Integer>();
 
         private final static int REQUEST_CODE_1 = 1;
 
@@ -108,39 +93,41 @@ public class MovieDates extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void param) {
-//            movieDate = new String[movies.size()];
-//            movieSeatsAvailable = new String[movies.size()];
-//
-//            Iterator itr=movies.iterator();
-//            int i = 0;
-//
-//            while(itr.hasNext()){
-//                Movie mv=(Movie)itr.next();
-//                movieDate[i] = mv.getName();
-//                movieSeatsAvailable[i] = mv.getDescription();
-//                i++;
-//            }
-//
-//            CustomListAdapter adapter = new CustomListAdapter(MovieDates.this, movieDate, movieSeatsAvailable, filmImageUrl, filmID);
-//            list = (ListView)findViewById(R.id.list);
-//            list.setAdapter(adapter);
-//
-//            list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//                @Override
-//                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                    String SelectedItem1 = Integer.toString(filmID[+position]);
-//                    String SelectedItem2 = movieDate[+position];
-//                    Intent intent = new Intent(MovieDates.this, MovieDates.class);
-//                    intent.putExtra("message1", SelectedItem1);
-//                    intent.putExtra("message2", SelectedItem2);
-//                    startActivityForResult(intent, REQUEST_CODE_1);
-//                }
-//            });
-//            try {
-//                is = socket.getInputStream();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
+            movieDate = new String[movieDateList.size()];
+            movieSeatsAvailable = new Integer[movieSeatsAvailableList.size()];
+
+            Iterator itrDates=movieDateList.iterator();
+            Iterator itrSeats=movieSeatsAvailableList.iterator();
+            int i = 0;
+
+            while(itrDates.hasNext() && itrSeats.hasNext()){
+                String dt=(String)itrDates.next();
+                Integer st=(Integer)itrSeats.next();
+                movieDate[i] = dt;
+                movieSeatsAvailable[i] = st;
+                i++;
+            }
+
+            CustomListAdapterReservation adapter = new CustomListAdapterReservation(MovieDates.this, movieDate, movieSeatsAvailable);
+            list2 = (ListView)findViewById(R.id.list2);
+            list2.setAdapter(adapter);
+
+            list2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String SelectedItem = movieDate[+position];
+                    Intent intent = new Intent(MovieDates.this, BookingActivity.class);
+                    intent.putExtra("message1", movieID);
+                    intent.putExtra("message2", movieName);
+                    intent.putExtra("message3", SelectedItem);
+                    startActivityForResult(intent, REQUEST_CODE_1);
+                }
+            });
+            try {
+                is = socket.getInputStream();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
         }
 
@@ -161,8 +148,8 @@ public class MovieDates extends AppCompatActivity {
                 seatsAvailable = readIntLittleEndian(dis);
 
                 String time = new String(timeByte, StandardCharsets.UTF_8);
-                movieDate.add(time);
-                movieSeatsAvailable.add(seatsAvailable);
+                movieDateList.add(time);
+                movieSeatsAvailableList.add(seatsAvailable);
                 System.out.println(time + " " + seatsAvailable  + "\n");
                 msgLen = readIntLittleEndian(dis);
                 msgId = readIntLittleEndian(dis);
