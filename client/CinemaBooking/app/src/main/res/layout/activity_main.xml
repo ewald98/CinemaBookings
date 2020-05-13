@@ -9,8 +9,8 @@
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="Cinema Booking"
+        android:layout_marginTop="35dp"
+        android:text="movie name"
         android:layout_centerHorizontal="true"
         android:textSize="30dp"
         android:textColor="@color/white" />

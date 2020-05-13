@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class MovieDates extends AppCompatActivity {
-
+    private ListView list2;
     String movieID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +40,24 @@ public class MovieDates extends AppCompatActivity {
 
         TextView textView = (TextView)findViewById(R.id.requestDataTextView);
         textView.setText(message);
+
+        String[] movieDate = {
+                "14.05.2020 - 15:00",
+                "14.05.2020 - 17:00",
+                "14.05.2020 - 19:00",
+                "14.05.2020 - 21:00"
+        };
+
+        Integer[] movieSeatsAvailable = {
+                30,
+                45,
+                21,
+                0
+        };
+
+        CustomListAdapterReservation adapter = new CustomListAdapterReservation(MovieDates.this, movieDate, movieSeatsAvailable);
+        list2 = (ListView)findViewById(R.id.list2);
+        list2.setAdapter(adapter);
 
         new NetworkOperator().execute();
     }
@@ -62,7 +80,6 @@ public class MovieDates extends AppCompatActivity {
         private List<Integer> movieSeatsAvailable = new ArrayList<Integer>();
 
         private final static int REQUEST_CODE_1 = 1;
-        private ListView list;
 
         Socket socket;
         OutputStream os;
@@ -92,7 +109,6 @@ public class MovieDates extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void param) {
-
 //            movieDate = new String[movies.size()];
 //            movieSeatsAvailable = new String[movies.size()];
 //
