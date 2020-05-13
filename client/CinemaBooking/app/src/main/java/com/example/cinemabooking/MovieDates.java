@@ -30,7 +30,6 @@ public class MovieDates extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_dates);
-        setTitle("dev2qa.com - Target Activity");
 
         // Get the transferred data from source activity.
         Intent intent = getIntent();
@@ -142,6 +141,7 @@ public class MovieDates extends AppCompatActivity {
 //            } catch (IOException e) {
 //                e.printStackTrace();
 //            }
+
         }
 
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)

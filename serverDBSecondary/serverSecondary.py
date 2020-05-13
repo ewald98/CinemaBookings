@@ -15,16 +15,21 @@ class Showtime:
 
     def get_message(self, msg_id):
         msg = msg_id.to_bytes(4, 'big') + \
-              bytes(self.get_formatted_datetime(), 'utf-8') + \
+              bytes(self.encode_datetime(), 'utf-8') + \
               self.seats_available.to_bytes(4, 'big')
 
         msg = len(msg).to_bytes(4, 'big') + msg
 
         return msg
 
-    def get_formatted_datetime(self):
+    def encode_datetime(self):
         x = datetime.strptime(self.showtime_datetime, "%Y-%m-%d %H:%M:%S")
         return x.strftime("%d.%m - %H:%M")
+
+    @staticmethod
+    def decode_datetime(encoded_datetime):
+        x = datetime.strptime(encoded_datetime, "%d.%m - %H:%M")
+        return x
 
 
 # Multi-threaded Python server : TCP Server Socket Thread Pool
@@ -38,19 +43,22 @@ class ClientThread(Thread):
         print("[+] New server socket thread started for " + ip + ":" + str(port))
 
     def run(self):
-        msg_id = self.get_msg_id()
+        msg_len, msg_id = self.get_msg_id()
         if msg_id == 4:
             self.handle_showtime_request()
+        elif msg_id == 7:
+            self.handle_booking_request(msg_len)
 
     def get_msg_id(self):
         data = self.client_socket.recv(8, socket.MSG_WAITALL)
+        msg_len = int.from_bytes(data[0:4], byteorder='big')
         msg_id = int.from_bytes(data[4:8], byteorder='big')
 
         if msg_id < 3:  # TODO: add msg_id boundaries
             print("Invalid msg_id(")
             exit(1)
 
-        return msg_id
+        return msg_len, msg_id
 
     def handle_showtime_request(self):
         data = self.client_socket.recv(4, socket.MSG_WAITALL)
@@ -80,6 +88,26 @@ class ClientThread(Thread):
 
         db_cursor.close()
         db.close()
+
+    def handle_booking_request(self):
+        # TODO: finish this
+        data = self.client_socket.recv(4, socket.MSG_WAITALL)
+        seats = int.from_bytes(data[0:4], byteorder='big')
+
+        data = self.client_socket.recv(13, socket.MSG_WAITALL)
+        # showtime =
+
+        def decode_datetime(encoded_datetime):
+            x = datetime.strptime(encoded_datetime, "%d.%m - %H:%M")
+            return x
+
+        msg_id = 8
+
+        db = sqlite3.connect('cinema.db')
+        db_cursor = db.cursor()
+        db_cursor.execute("SELECT * FROM showtimes WHERE  = " + str())
+        rows = db_cursor.fetchall()
+
 
 
 # Multi-threaded Python server : TCP Server Socket Program Stub
