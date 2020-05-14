@@ -54,7 +54,7 @@
         android:layout_height="30dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="200dp"
-        android:background="#32000000"
+        android:background="#999999"
         android:ems="15"
         android:hint=" Full Name"
         android:importantForAutofill="no"
@@ -68,12 +68,12 @@
         android:layout_height="30dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
-        android:background="#32000000"
+        android:background="#999999"
         android:ems="15"
         android:layout_below="@+id/fullname"
         android:hint=" Phone number"
         android:importantForAutofill="no"
-        android:inputType="textPersonName"
+        android:inputType="phone"
         android:textColor="@color/white"
         android:visibility="visible" />
 
@@ -83,13 +83,13 @@
         android:layout_height="30dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
-        android:background="#32000000"
+        android:background="#999999"
         android:layout_below="@+id/phonenumber"
         android:ems="15"
         android:textColor="@color/white"
         android:hint=" Number of reserved seats"
         android:importantForAutofill="no"
-        android:inputType="textPersonName"
+        android:inputType="number"
         android:visibility="visible" />
 
     <Button

@@ -31,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
 
         new NetworkOperator().execute();
 
-
     }
 
     public static byte[] concatenateByteArrays(byte[] a, byte[] b) {
