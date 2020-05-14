@@ -6,6 +6,8 @@ import sqlite3
 from time import sleep
 from datetime import datetime
 
+db_lock = Lock()
+
 
 class Showtime:
 
@@ -29,7 +31,7 @@ class Showtime:
     @staticmethod
     def decode_datetime(encoded_datetime):
         x = datetime.strptime(encoded_datetime, "%d.%m - %H:%M")
-        return x.strftime("%Y-%m-%d %H:%M:%S")
+        return x.strftime("%m-%d %H:%M")
 
 
 # Multi-threaded Python server : TCP Server Socket Thread Pool
@@ -98,7 +100,7 @@ class ClientThread(Thread):
 
         data = self.client_socket.recv(13, socket.MSG_WAITALL)
         encoded_showtime = str(data)
-        decoded_showtime = Showtime.decode_datetime(encoded_showtime)
+        decoded_partial_showtime = Showtime.decode_datetime(encoded_showtime)
 
         data = self.client_socket.recv(phone_no_len, socket.MSG_WAITALL)
         phone_no = str(data)
@@ -107,24 +109,52 @@ class ClientThread(Thread):
         data = self.client_socket.recv(name_len, socket.MSG_WAITALL)
         name = str(data)
 
-        # TODO: use thread-locking mechanism
         db = sqlite3.connect('cinema.db')
         db_cursor = db.cursor()
+
+        return_code = 0 # 0 stands for successful
         # get id_s using movie_id & showtime
-        db_cursor.execute("SELECT id_s FROM showtimes WHERE seats_available = " + str(seats))
-        db_cursor.execute("SELECT * FROM showtimes WHERE seats_available = " + str(seats))
+        db_lock.acquire()
+        db_cursor.execute(
+            "SELECT id_s, seats_available FROM showtimes WHERE id_m = {0} AND instr(datetime, '{1}') > 0"
+            .format(str(movie_id), decoded_partial_showtime)
+        )
         rows = db_cursor.fetchall()
-
-        confirmation_code = 0
         if len(rows) == 0:
-            confirmation_code = 0
-        else:
-            confirmation_code = 1
+            print("error: showtime not found")
+            return_code = 3
+        elif len(rows) > 1:
+            print("error: found more valid showtimes")
+            return_code = 4
+        elif len(rows) == 1:
+            (showtime_id, seats_available) = rows[0]
+            if seats > seats_available:
+                print("error: not enough seats available!")
+                return_code = 5
 
-        db_cursor.execute("UPDATE showtimes SET seats_available = (?) WHERE ", (seats_available - seats,))
+            if return_code == 0:
+                db_cursor.execute(
+                    "UPDATE showtimes SET seats_available = (?) WHERE id_s = ", (seats_available - seats,)
+                )
+                db.commit()
 
-        # send confirmation/error
+                db_cursor.execute(
+                    "INSERT INTO bookings (id_s, seats, name, phone_no) VALUES ({0}, {1}, {2}, {3})"
+                    .format(str(showtime_id), str(seats), name, phone_no)
+                )
+        db_lock.release()
+
         msg_id = 8
+        msg = msg_id.to_bytes(4, 'big') + \
+              return_code.to_bytes(4, 'big')
+        msg = len(msg).to_bytes(4, 'big') + msg
+
+        self.client_socket.sendall(msg)
+
+        print("Successfully sent confirmation")
+
+        db_cursor.close()
+        db.close()
 
 
 # Multi-threaded Python server : TCP Server Socket Program Stub
