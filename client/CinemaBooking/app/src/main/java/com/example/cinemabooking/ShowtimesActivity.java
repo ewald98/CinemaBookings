@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -23,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class MovieDates extends AppCompatActivity {
+public class ShowtimesActivity extends AppCompatActivity {
     private ListView list2;
     private String movieID;
     private String movieName;
@@ -85,6 +84,7 @@ public class MovieDates extends AppCompatActivity {
                 sendMessage();
                 is = socket.getInputStream();
                 readMessages();
+                socket.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -108,7 +108,7 @@ public class MovieDates extends AppCompatActivity {
                 i++;
             }
 
-            CustomListAdapterReservation adapter = new CustomListAdapterReservation(MovieDates.this, movieDate, movieSeatsAvailable);
+            CustomListAdapterReservation adapter = new CustomListAdapterReservation(ShowtimesActivity.this, movieDate, movieSeatsAvailable);
             list2 = (ListView)findViewById(R.id.list2);
             list2.setAdapter(adapter);
 
@@ -116,7 +116,7 @@ public class MovieDates extends AppCompatActivity {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     String SelectedItem = movieDate[+position];
-                    Intent intent = new Intent(MovieDates.this, BookingActivity.class);
+                    Intent intent = new Intent(ShowtimesActivity.this, BookingActivity.class);
                     intent.putExtra("message1", movieID);
                     intent.putExtra("message2", movieName);
                     intent.putExtra("message3", SelectedItem);

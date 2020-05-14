@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/bg"
-    tools:context=".MovieDates" >
+    tools:context=".ShowtimesActivity" >
 
     <TextView
         android:id="@+id/requestDataTextView"

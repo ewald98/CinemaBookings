@@ -86,14 +86,16 @@ public class BookingActivity extends AppCompatActivity {
                     nrreservedseats.requestFocus();
                 }
 
+                new NetworkOperator().execute();
             }
         });
+
     }
 
-    class NetworkOperator extends AsyncTask<Void, Void, Void> {
+    class NetworkOperator extends AsyncTask<Void, Void, Integer> {
 
         public static final String IP_ADDRESS = "10.0.2.2";
-        public static final int PORT = 2006;
+        public static final int PORT = 2005;
 
         private String[] filmNames;
         private String[] filmDescriptions;
@@ -110,8 +112,7 @@ public class BookingActivity extends AppCompatActivity {
 
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
-        protected Void doInBackground(Void... voids) {
-            ArrayList<Movie> movieList = null;
+        protected Integer doInBackground(Void... voids) {
 
             socket = null;
             try {
@@ -120,26 +121,25 @@ public class BookingActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
+            int result = -1;
             try {
                 os = socket.getOutputStream();
                 sendMessage();
                 is = socket.getInputStream();
+                result = readMessages();
+                socket.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return null;
+
+
+            return result;
         }
 
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
-        protected void onPostExecute(Void param) {
+        protected void onPostExecute(Integer result) {
 
-            int result = 0;
-            try {
-                result = readMessages();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
             if (!name.isEmpty() && !phoneNo.isEmpty() && !seats.isEmpty()) {
                 if (0 == result) {
                     Toast toast = Toast.makeText(BookingActivity.this, "Booking with success", Toast.LENGTH_LONG);
@@ -196,15 +196,15 @@ public class BookingActivity extends AppCompatActivity {
             byte[] seatsByte = new byte[4];
             byte[] showTimeByte = new byte[13];
             byte[] phoneNoByte = phoneNo.getBytes(StandardCharsets.UTF_8);
-            byte[] movieNameByte = movieName.getBytes(StandardCharsets.UTF_8);
+            byte[] bookingNameByte = name.getBytes(StandardCharsets.UTF_8);
 
-            int len = 33 + phoneNo.length() + movieName.length();
+            int len = 29 + phoneNo.length() + name.length();
             msgLen = intToLittleEndian(len);
             msgId = intToLittleEndian(7);
             phoneNoLenByte = intToLittleEndian(phoneNo.length());
             movieIDByte = intToLittleEndian(Integer.parseInt(movieID));
             seatsByte = intToLittleEndian(Integer.parseInt(seats));
-            showTimeByte = intToLittleEndian(Integer.parseInt(showTime));
+            showTimeByte = showTime.getBytes(StandardCharsets.UTF_8);
 
             byte[] data = new byte[len + 4];
 
@@ -215,7 +215,7 @@ public class BookingActivity extends AppCompatActivity {
             System.arraycopy(seatsByte, 0, data, 16, 4);
             System.arraycopy(showTimeByte, 0, data, 20, 13);
             System.arraycopy(phoneNoByte, 0, data, 33, phoneNo.length());
-            System.arraycopy(movieNameByte, 0, data, 33 + phoneNo.length(), movieName.length());
+            System.arraycopy(bookingNameByte, 0, data, 33 + phoneNo.length(), name.length());
 
             try {
                 dOut.write(data);

@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
                 sendMessage();
                 is = socket.getInputStream();
                 movieList = readMessages();
+                socket.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -115,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     String SelectedItem1 = Integer.toString(filmID[+position]);
                     String SelectedItem2 = filmNames[+position];
-                    Intent intent = new Intent(MainActivity.this, MovieDates.class);
+                    Intent intent = new Intent(MainActivity.this, ShowtimesActivity.class);
                     intent.putExtra("message1", SelectedItem1);
                     intent.putExtra("message2", SelectedItem2);
                     startActivityForResult(intent, REQUEST_CODE_1);

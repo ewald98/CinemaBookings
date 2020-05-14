@@ -51,6 +51,8 @@ class ClientThread(Thread):
         elif msg_id == 7:
             self.handle_booking_request(msg_len)
 
+        self.client_socket.close()
+
     def get_msg_id(self):
         data = self.client_socket.recv(8, socket.MSG_WAITALL)
         msg_len = int.from_bytes(data[0:4], byteorder='big')
@@ -99,15 +101,15 @@ class ClientThread(Thread):
         seats = int.from_bytes(data[8:12], byteorder='big')
 
         data = self.client_socket.recv(13, socket.MSG_WAITALL)
-        encoded_showtime = str(data)
+        encoded_showtime = data.decode("utf-8")
         decoded_partial_showtime = Showtime.decode_datetime(encoded_showtime)
 
         data = self.client_socket.recv(phone_no_len, socket.MSG_WAITALL)
-        phone_no = str(data)
+        phone_no = data.decode("utf-8")
 
-        name_len = msg_len - 25 - phone_no_len
+        name_len = msg_len - 29 - phone_no_len
         data = self.client_socket.recv(name_len, socket.MSG_WAITALL)
-        name = str(data)
+        name = data.decode("utf-8")
 
         db = sqlite3.connect('cinema.db')
         db_cursor = db.cursor()
@@ -134,14 +136,16 @@ class ClientThread(Thread):
 
             if return_code == 0:
                 db_cursor.execute(
-                    "UPDATE showtimes SET seats_available = (?) WHERE id_s = ", (seats_available - seats,)
+                    "UPDATE showtimes SET seats_available = {0} WHERE id_s = {1}"
+                    .format(seats_available - seats, showtime_id)
                 )
                 db.commit()
 
                 db_cursor.execute(
-                    "INSERT INTO bookings (id_s, seats, name, phone_no) VALUES ({0}, {1}, {2}, {3})"
-                    .format(str(showtime_id), str(seats), name, phone_no)
+                    "INSERT INTO bookings (id_s, seats, name, phone_no) VALUES (?, ?, ?, ?)",
+                    (showtime_id, seats, name, phone_no)
                 )
+                db.commit()
         db_lock.release()
 
         msg_id = 8
@@ -157,10 +161,9 @@ class ClientThread(Thread):
         db.close()
 
 
-# Multi-threaded Python server : TCP Server Socket Program Stub
+# Multi-threaded Python server : TCP Server Socket Program
 HOST_IP = 'localhost'
 PORT = 2005
-BUFFER_SIZE = 20  # Usually 1024, but we need quick response
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -177,5 +180,6 @@ while True:
     new_thread.start()
     threads.append(new_thread)
 
-# for t in threads:
-#     t.join()
+    for thread in threads:
+        if not thread.is_alive():
+            thread.join()
