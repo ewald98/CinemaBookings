@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Showtime Master</title>
+{% endblock %}
+
+{% block body %}
+<div class="content">
+    <h1 style="text-align: center">Showtime Master</h1>
+    {% if showtimes|length < 1 %}
+    <h4 style="text-align: center">There are no showtimes, create one below!</h4>
+    {% else %}
+    <table>
+        <tr>
+            <th>Movie Name</th>
+            <th>Movie ID</th>
+            <th>Date</th>
+            <th>Seats available</th>
+            <th>Actions</th>
+        </tr>
+        {% for showtime in showtimes %}
+        <tr>
+            <td>{{ showtime.movie_name }}</td>
+            <td>{{ showtime.id_m }}</td>
+            <td>{{ showtime.datetime }}</td>
+            <td>{{ showtime.seats_available }}</td>
+            <td>
+                <a href="/delete/{{showtime.id_s}}">Delete</a>
+                <br>
+                <a href="/update/{{showtime.id_s}}">Update</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table><br><br>
+    {% endif %}
+    <form action="/" method="POST">
+        <input type="text" name="movie_name" id="movie_name" placeholder="Movie Name"><br><br>
+        <input type="text" name="id_m" id="id_m" placeholder="Movie ID"><br><br>
+        <input type="text" name="datetime" id="datetime" placeholder="Datetime"><br><br>
+        <input type="text" name="seats_available" id="seats_available" placeholder="Seats available"><br><br>
+        <input type="submit" value="Add Showtime">
+    </form>
+</div>
+{% endblock %}

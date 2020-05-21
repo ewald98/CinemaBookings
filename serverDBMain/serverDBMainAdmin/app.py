@@ -56,8 +56,7 @@ def update(id_m):
     movie = Movies.query.get_or_404(id_m)
 
     if request.method == 'POST':
-        movie.name = request.form['name']
-        movie.description = request.form['description']
+        movie.datetime = request.form['description']
         movie.image_url = request.form['image_url']
 
         try:

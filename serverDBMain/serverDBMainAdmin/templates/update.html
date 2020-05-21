@@ -9,10 +9,10 @@
     <h1 style="text-align: center">Update Movie </h1>
 
     <form action="/update/{{movie.id_m}}" method="POST">
-        <input type="text" name="name" id="name" placeholder="Name" value="{{movie.name}}"><br><br>
+        <label>{{movie.name}}</label><br><br>
         <input type="text" name="description" id="description" placeholder="Description" value="{{movie.description}}"><br><br>
         <input type="text" name="image_url" id="image_url" placeholder="Image URL" value="{{movie.image_url}}"><br><br>
-        <input type="submit" value="Add Movie">
+        <input type="submit" value="Update Movie">
     </form>
 </div>
 {% endblock %}
