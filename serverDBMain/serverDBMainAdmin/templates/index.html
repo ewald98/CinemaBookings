@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Movie Master</title>
+{% endblock %}
+
+{% block body %}
+<div class="content">
+    <h1 style="text-align: center">Movie Master</h1>
+    {% if movies|length < 1 %}
+    <h4 style="text-align: center">There are no movies, create one below!</h4>
+    {% else %}
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+        {% for movie in movies %}
+        <tr>
+            <td>{{ movie.name }}</td>
+            <td>{{ movie.description }}</td>
+            <td>
+                <a href="/delete/{{movie.id_m}}">Delete</a>
+                <br>
+                <a href="/update/{{movie.id_m}}">Update</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table><br><br>
+    {% endif %}
+    <form action="/" method="POST">
+        <input type="text" name="name" id="name" placeholder="Name"><br><br>
+        <input type="text" name="description" id="description" placeholder="Description"><br><br>
+        <input type="text" name="image_url" id="image_url" placeholder="ImageURL"><br><br>
+        <input type="submit" value="Add Movie">
+    </form>
+</div>
+{% endblock %}

@@ -1,1 +1,0 @@
-movieAdmin code should be in this folder
