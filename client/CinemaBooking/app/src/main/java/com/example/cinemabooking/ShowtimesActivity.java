@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -107,6 +108,9 @@ public class ShowtimesActivity extends AppCompatActivity {
                 movieSeatsAvailable[i] = st;
                 i++;
             }
+            TextView tv_dynamic = new TextView(ShowtimesActivity.this);
+            tv_dynamic = (TextView)findViewById(R.id.requestDataTextView);
+            tv_dynamic.setText("This movie isn't available anymore!");
 
             CustomListAdapterReservation adapter = new CustomListAdapterReservation(ShowtimesActivity.this, movieDate, movieSeatsAvailable);
             list2 = (ListView)findViewById(R.id.list2);

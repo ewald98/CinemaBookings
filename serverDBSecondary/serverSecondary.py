@@ -72,7 +72,7 @@ class ClientThread(Thread):
 
         db = sqlite3.connect('cinema.db')
         db_cursor = db.cursor()
-        db_cursor.execute("SELECT * FROM showtimes WHERE id_m = " + str(movie_id))
+        db_cursor.execute("SELECT * FROM showtimes WHERE `datetime` > datetime('now') AND  id_m = " + str(movie_id))
         rows = db_cursor.fetchall()
 
         showtimes = []
